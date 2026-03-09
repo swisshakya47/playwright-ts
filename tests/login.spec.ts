@@ -1,17 +1,19 @@
 import { test, expect } from '@playwright/test';
+import { beforeEach } from 'node:test';
 
-test('Launching the browser', async ({ page }) => {
-  await page.goto('https://push.bhoos.dev');
+const URL = "https://push.bhoos.dev ";
+
+test.beforeEach(async ({page})=> {
+await page.goto(URL);
+});
+
+test('login to bhoos notification', async ({ page }) => {
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle("NotifyHub - Multi-App Notification Service");
   await page.waitForTimeout(3000); 
-  });
+  // await expect(page).toHaveURL("https://push.bhoos.dev/#/login");
 
-test('login to bhoos notification', async ({ page }) => {
-  await page.goto('https://push.bhoos.dev');
-
-  await expect(page).toHaveURL("https://push.bhoos.dev/#/login");
   await expect(page.getByText("Welcome Back")).toBeVisible();
   console.log("Welcome Back is viewed as expected");
 
@@ -20,8 +22,8 @@ test('login to bhoos notification', async ({ page }) => {
   await page.waitForTimeout(3000); 
   });
 
+
 test('Signing the page', async ({ page }) => {
-  await page.goto('https://push.bhoos.dev/#/login');
 
   await expect(page.locator('input[type="email"]')).toBeVisible();
 
@@ -31,6 +33,7 @@ test('Signing the page', async ({ page }) => {
   console.log("Enter password successfully ")
 
   await page.getByRole('button', { name: /sign in/i }).click();
+  
   await expect(page).toHaveURL("https://push.bhoos.dev/#/");
   console.log("logged in successfully!!!")
 
