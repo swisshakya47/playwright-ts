@@ -49,6 +49,10 @@ export class BasePage {
   async goToTemplates() {
     await this.templatesLink.click();
   }
+  
+  async goToProfile() {
+    await this.profileSection.click();
+  }
 
   async logout() {
     await this.logoutButton.click();
@@ -67,7 +71,7 @@ export class BasePage {
     await expect(this.selectAppDropdown).toBeVisible();
   }
 
-  async verifyDashboardLoaded() {
+  async verifyOnDasboardPage() {
     await expect(this.page).toHaveURL("/#/");
   }
 
@@ -82,7 +86,5 @@ export class BasePage {
   async verifyOnTemplatesPage() {
     await expect(this.page).toHaveURL("/#/templates");
   }
-  async goToProfile() {
-    await this.profileSection.click();
-  }
+ 
 }
