@@ -1,50 +1,41 @@
-import { test, expect } from '@playwright/test';
+import { test } from "@playwright/test";
+import { LoginPage } from "../pages/LoginPage";
+import { DashboardPage } from "../pages/DashboardPage";
 
-test('test', async ({ page }) => {
-  await page.goto('https://push.bhoos.dev/#/login');
-  await page.getByRole('textbox', { name: 'admin@example.com' }).fill('swechchya.shakya@bhoos.com');
-  await page.getByRole('textbox', { name: '••••••••' }).click();
-  await page.getByRole('textbox', { name: '••••••••' }).fill('shakya@123');
-  await page.getByRole('button', { name: 'Sign In' }).click();
-  await page.waitForTimeout(1000);
-  await expect(page.getByRole('heading', { name: 'Select an App' })).toBeVisible();
-  await expect(page.getByText("Manage notifications across all your apps")).toBeVisible();
-  await page.getByRole('combobox').selectOption('61692bd5-1e6c-40c6-9136-e9dfe5aa02a4');
-  await page.waitForTimeout(2000);
-  await expect(page.getByRole('heading', { name: 'Marriage-dev' })).toBeVisible();
-  await expect(page.getByText("Manage notifications across all your apps")).toBeVisible();
+test.describe("Dashboard Page", () => {
+  let loginPage: LoginPage;
+  let dashboardPage: DashboardPage;
 
-  //Dashboard flow
-  await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
-  await expect(page.getByText("Overview of your notification")).toBeVisible();
-  await expect(page.locator('div.card').filter({ hasText: 'Total Notifications' })).toBeVisible();;
-  await expect(page.locator('div.card').filter({ hasText: 'Total Recipients' })).toBeVisible();;
-  await expect(page.locator('div.card').filter({ hasText: 'Successful' })).toBeVisible();;
-  await expect(page.locator('div.card').filter({ hasText: 'Failed' })).toBeVisible();;
+  test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page);
+    dashboardPage = new DashboardPage(page);
+    await loginPage.goto();
+    await loginPage.login(process.env.EMAIL!, process.env.PASSWORD!);
+    await loginPage.verifyLoginSuccess();
+  });
+  test("verify empty dashboard before selecting app", async () => {
+    await dashboardPage.verifyEmptyDashboard();
+  });
 
-  //Send Notification flow
-  await page.getByRole('link', { name: 'Send Notification' }).click();
-  await expect(page.getByRole('heading', { name: 'Send Notification' })).toBeVisible();
-  await expect(page.getByText("Send push notifications to your users")).toBeVisible();
-  await page.getByRole('button', { name: /All Users/i }).click();
-  await page.waitForTimeout(1000); 
-  await page.getByRole('button', { name: /Specific Users/i }).click();
-  await page.waitForTimeout(1000); 
-  await page.getByRole('button', { name: /Topic Subscribers/i }).click();
-  await page.waitForTimeout(1000); 
-  await page.getByRole('button', { name: /Custom Query/i }).click();
-  await page.waitForTimeout(3000); 
+  test("should display dashboard after selecting app", async () => {
+    await dashboardPage.selectApp(process.env.APP_NAME!);
+    await dashboardPage.verifyDashboardLoaded();
+  });
 
-  //Templates overflow
-  await page.getByRole('link', { name: 'Templates' }).click();
-  await page.waitForTimeout(3000); 
-  await expect(page).toHaveURL(/templates/); 
-  await expect(page.locator('h1', { hasText: 'Templates' })).toBeVisible();
-  await expect(page.getByText("Manage notification templates for Marriage-dev")).toBeVisible();
-
-  await page.getByRole('button', { name: /Logout/i }).click(); 
-  await page.waitForTimeout(1000);
-  await expect(page.getByText(/logged out successful/i)).toBeVisible();
-
-
+  test("should navigate to profile ", async () => {
+    await dashboardPage.goToProfile();
+    await dashboardPage.verifyOnProfilePage();
+  });
+  test("should navigate to send notification ", async () => {
+    await dashboardPage.goToSendNotification();
+    await dashboardPage.verifyOnSendNotificationPage();
+  });
+  test("should navigate to templates ", async () => {
+    await dashboardPage.goToTemplates();
+    await dashboardPage.verifyOnTemplatesPage();
+  });
+  test("logout successfully", async () => {
+    await dashboardPage.logout();
+    await loginPage.verifyLogoutSuccess();
+  });
 });

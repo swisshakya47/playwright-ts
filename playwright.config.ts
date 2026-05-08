@@ -1,4 +1,8 @@
+//<reference types="node" />
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /**
  * Read environment variables from file.
@@ -14,6 +18,10 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   testMatch: ['**/*spec.ts'],
+  timeout:30_000, //Each test must finish within 30 seconds
+  //retries: 1, //retry failed test once before marking as failed
+  //workers:4, //run 4 tests in parallel(speeds things up)
+
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -24,14 +32,24 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
+
+// to generate reports in case of faliure.
+  // reporter: [["dot"],["json", {
+  //   outputFile: "jsonReports/jsonReport.json"
+  // }], ["html", {
+  //   open: "never"
+  // }]],
+
+
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
-
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    baseURL: process.env.BASE_URL,
+    launchOptions: {
+      slowMo:1000
+    },
     trace: 'on-first-retry',
-    // screenshot: 'only-on-failure',
+    screenshot: 'only-on-failure',
+    video : 'retain-on-failure',
     headless: false,
   },
 

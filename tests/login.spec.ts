@@ -1,47 +1,44 @@
-import { test, expect } from '@playwright/test';
-import { beforeEach } from 'node:test';
+import { test } from '@playwright/test';
+import { LoginPage } from '../pages/LoginPage';
 
-const URL = "https://push.bhoos.dev ";
+test.describe('Login Page', () => {
 
-test.beforeEach(async ({page})=> {
-await page.goto(URL);
-});
+  let loginPage: LoginPage;
+  //  ↑ 'let' because we assign it in beforeEach
 
-test('login to bhoos notification', async ({ page }) => {
-
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle("NotifyHub - Multi-App Notification Service");
-  await page.waitForTimeout(3000); 
-  // await expect(page).toHaveURL("https://push.bhoos.dev/#/login");
-
-  await expect(page.getByText("Welcome Back")).toBeVisible();
-  console.log("Welcome Back is viewed as expected");
-
-  await expect(page.getByText("Sign in to your account")).toBeVisible();
-  console.log("Sign in page is viewed as expected");
-  await page.waitForTimeout(3000); 
+  // Runs before every test
+  test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page);
+    await loginPage.goto();
   });
 
 
-test('Signing the page', async ({ page }) => {
+  // TEST 1 — Check page loaded correctly
+  test('should display login page correctly', async ({ page }) => {
 
-  await expect(page.locator('input[type="email"]')).toBeVisible();
+    await loginPage.verifyPageLoaded();
+  });
 
-  await page.locator('input[type="email"]').fill('swechchya.shakya@bhoos.com');
-  console.log("Enter email succesfully"),
-  await page.locator('input[type="password"]').fill('shakya@123');
-  console.log("Enter password successfully ")
 
-  await page.getByRole('button', { name: /sign in/i }).click();
-  
-  await expect(page).toHaveURL("https://push.bhoos.dev/#/");
-  console.log("logged in successfully!!!")
+  // TEST 2 — Valid login
+  test('should login successfully with valid credentials', async ({ page }) => {
 
-  await page.waitForTimeout(3000);
+    await loginPage.login(
+      process.env.EMAIL!,
+      process.env.PASSWORD!
+    );
+
+    await loginPage.verifyLoginSuccess();
+  });
+
+
+  // TEST 3 — Invalid login
+  test('should fail with invalid credentials', async ({ page }) => {
+    await loginPage.login(
+      'wrong@email.com',
+      'wrongpassword'
+    );
+
+    await loginPage.verifyLoginFailed();
+  });
 });
-
-
-
-
-
-
