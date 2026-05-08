@@ -60,7 +60,7 @@ export class SendNotificationPage extends BasePage {
   }
 
   async verifySendNotificationLoaded() {
-    await expect(this.page).toHaveURL("/#/send");
+    await this.verifyOnSendNotificationPage();
     await expect(this.pageHeading).toBeVisible();
     await expect(this.subPageHeading).toBeVisible();
     await this.verifyAllTabsVisible();
