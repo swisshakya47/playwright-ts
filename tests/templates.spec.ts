@@ -1,6 +1,6 @@
 import { test } from "@playwright/test";
 import { LoginPage } from "../pages/LoginPage";
-import { TemplatesPage } from "../pages/TemplatesPage.ts";
+import { TemplatesPage } from "../pages/TemplatesPage";
 
 test.describe("Templates Page", () => {
   let loginPage: LoginPage;
