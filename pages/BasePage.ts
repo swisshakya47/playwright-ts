@@ -71,7 +71,7 @@ export class BasePage {
     await expect(this.selectAppDropdown).toBeVisible();
   }
 
-  async verifyOnDasboardPage() {
+  async verifyOnDashboardPage() {
     await expect(this.page).toHaveURL("/#/");
   }
 

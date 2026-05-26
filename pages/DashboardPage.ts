@@ -32,14 +32,14 @@ export class DashboardPage extends BasePage {
   // ── Dashboard Specific Assertions ─────────────────
   // Before selecting app
   async verifyEmptyDashboard() {
-    await this.verifyOnDasboardPage();
+    await this.verifyOnDashboardPage();
     await this.verifyNoAppSelected();        // ← from BasePage!
     await expect(this.emptyStateMessage).toBeVisible();
   }
 
   // After selecting app
   async verifyDashboardLoaded() {
-    await this.verifyOnDasboardPage();
+    await this.verifyOnDashboardPage();
     await expect(this.pageHeading).toBeVisible();
     await expect(this.totalNotificationsCard).toBeVisible();
     await expect(this.totalRecipientsCard).toBeVisible();
